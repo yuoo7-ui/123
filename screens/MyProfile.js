@@ -11,6 +11,9 @@ export default function MyProfile() {
   const [petType, setPetType] = useState('');
   const [petExperience, setPetExperience] = useState('');
   const [walkTime, setWalkTime] = useState('');
+  const [petGender, setPetGender] = useState('');
+  const [hasInsurance, setHasInsurance] = useState('');
+  const [adoptionRoute, setAdoptionRoute] = useState('');
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -32,6 +35,9 @@ export default function MyProfile() {
         setPetType(userData.petType || '');
         setPetExperience(userData.petExperience || '');
         setWalkTime(userData.walkTime || '');
+        setPetGender(userData.petGender || '');
+        setHasInsurance(userData.hasInsurance || '');
+        setAdoptionRoute(userData.adoptionRoute || '');
       }
     };
 
@@ -66,8 +72,11 @@ export default function MyProfile() {
         <Text style={styles.infoText}>이름: {name || '미입력'}</Text>
         <Text style={styles.infoText}>전화번호: {phone || '미입력'}</Text>
         <Text style={styles.infoText}>반려동물 종류: {petType || '미입력'}</Text>
-        <Text style={styles.infoText}>경험 기간: {petExperience || '미입력'}</Text>
+        <Text style={styles.infoText}>반려동물 성별: {petGender || '미입력'}</Text>
+        <Text style={styles.infoText}>키운 기간: {petExperience || '미입력'}</Text>
         <Text style={styles.infoText}>하루 산책 시간: {walkTime || '미입력'}</Text>
+        <Text style={styles.infoText}>보험 가입 여부: {hasInsurance || '미입력'}</Text>
+        <Text style={styles.infoText}>입양 경로: {adoptionRoute || '미입력'}</Text>
         <Button title="수정" onPress={() => setIsEditing(true)} />
       </View>
 
