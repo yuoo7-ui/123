@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, Modal } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  StyleSheet,
+  Alert,
+  Modal,
+  ScrollView,
+} from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import { auth, db } from '../firebase-config';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useNavigation } from '@react-navigation/native';
@@ -8,12 +18,12 @@ export default function MyProfile() {
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
-  const [petType, setPetType] = useState('');
-  const [petExperience, setPetExperience] = useState('');
-  const [walkTime, setWalkTime] = useState('');
-  const [petGender, setPetGender] = useState('');
-  const [hasInsurance, setHasInsurance] = useState('');
-  const [adoptionRoute, setAdoptionRoute] = useState('');
+  const [petType, setPetType] = useState('개');
+  const [petExperience, setPetExperience] = useState('1년 미만');
+  const [walkTime, setWalkTime] = useState('15분 이하');
+  const [petGender, setPetGender] = useState('수컷');
+  const [hasInsurance, setHasInsurance] = useState('예');
+  const [adoptionRoute, setAdoptionRoute] = useState('펫샵');
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -32,12 +42,12 @@ export default function MyProfile() {
         const userData = userSnapshot.data();
         setName(userData.name || '');
         setPhone(userData.phone || '');
-        setPetType(userData.petType || '');
-        setPetExperience(userData.petExperience || '');
-        setWalkTime(userData.walkTime || '');
-        setPetGender(userData.petGender || '');
-        setHasInsurance(userData.hasInsurance || '');
-        setAdoptionRoute(userData.adoptionRoute || '');
+        setPetType(userData.petType || '개');
+        setPetExperience(userData.petExperience || '1년 미만');
+        setWalkTime(userData.walkTime || '15분 이하');
+        setPetGender(userData.petGender || '수컷');
+        setHasInsurance(userData.hasInsurance || '예');
+        setAdoptionRoute(userData.adoptionRoute || '펫샵');
       }
     };
 
@@ -54,7 +64,16 @@ export default function MyProfile() {
     try {
       await setDoc(
         doc(db, 'users', user.uid),
-        { name, phone },
+        {
+          name,
+          phone,
+          petType,
+          petExperience,
+          walkTime,
+          petGender,
+          hasInsurance,
+          adoptionRoute,
+        },
         { merge: true }
       );
       setIsEditing(false);
@@ -82,23 +101,112 @@ export default function MyProfile() {
 
       <Modal visible={isEditing} animationType="slide" transparent={true}>
         <View style={styles.modalContainer}>
-          <View style={styles.modalView}>
+          <ScrollView contentContainerStyle={styles.modalView}>
             <Text style={styles.header}>프로필 수정</Text>
-            <TextInput
-              style={styles.textInput}
-              placeholder="이름"
-              value={name}
-              onChangeText={setName}
-            />
-            <TextInput
-              style={styles.textInput}
-              placeholder="전화번호"
-              value={phone}
-              onChangeText={setPhone}
-            />
+
+            <View style={styles.inputRow}>
+              <Text style={styles.label}>이름</Text>
+              <TextInput
+                style={styles.textInput}
+                placeholder="이름"
+                value={name}
+                onChangeText={setName}
+              />
+            </View>
+
+            <View style={styles.inputRow}>
+              <Text style={styles.label}>전화번호</Text>
+              <TextInput
+                style={styles.textInput}
+                placeholder="전화번호"
+                value={phone}
+                onChangeText={setPhone}
+                keyboardType="phone-pad"
+              />
+            </View>
+
+            <View style={styles.inputRow}>
+              <Text style={styles.label}>반려동물 종류</Text>
+              <Picker
+                selectedValue={petType}
+                onValueChange={setPetType}
+                style={styles.picker}
+              >
+                <Picker.Item label="개" value="개" />
+                <Picker.Item label="고양이" value="고양이" />
+                <Picker.Item label="기타" value="기타" />
+                <Picker.Item label="없음" value="없음" />
+              </Picker>
+            </View>
+
+            <View style={styles.inputRow}>
+              <Text style={styles.label}>반려동물 성별</Text>
+              <Picker
+                selectedValue={petGender}
+                onValueChange={setPetGender}
+                style={styles.picker}
+              >
+                <Picker.Item label="수컷" value="수컷" />
+                <Picker.Item label="암컷" value="암컷" />
+              </Picker>
+            </View>
+
+            <View style={styles.inputRow}>
+              <Text style={styles.label}>키운 기간</Text>
+              <Picker
+                selectedValue={petExperience}
+                onValueChange={setPetExperience}
+                style={styles.picker}
+              >
+                <Picker.Item label="1년 미만" value="1년 미만" />
+                <Picker.Item label="1~3년" value="1~3년" />
+                <Picker.Item label="3년 이상" value="3년 이상" />
+              </Picker>
+            </View>
+
+            <View style={styles.inputRow}>
+              <Text style={styles.label}>하루 산책 시간</Text>
+              <Picker
+                selectedValue={walkTime}
+                onValueChange={setWalkTime}
+                style={styles.picker}
+              >
+                <Picker.Item label="15분 이하" value="15분 이하" />
+                <Picker.Item label="15~30분" value="15~30분" />
+                <Picker.Item label="30분 이상" value="30분 이상" />
+              </Picker>
+            </View>
+
+            <View style={styles.inputRow}>
+              <Text style={styles.label}>보험 가입 여부</Text>
+              <Picker
+                selectedValue={hasInsurance}
+                onValueChange={setHasInsurance}
+                style={styles.picker}
+              >
+                <Picker.Item label="예" value="예" />
+                <Picker.Item label="아니오" value="아니오" />
+              </Picker>
+            </View>
+
+            <View style={styles.inputRow}>
+              <Text style={styles.label}>입양 경로</Text>
+              <Picker
+                selectedValue={adoptionRoute}
+                onValueChange={setAdoptionRoute}
+                style={styles.picker}
+              >
+                <Picker.Item label="펫샵" value="펫샵" />
+                <Picker.Item label="입양" value="입양" />
+                <Picker.Item label="지인" value="지인" />
+                <Picker.Item label="직접 구조" value="직접 구조" />
+                <Picker.Item label="기타" value="기타" />
+              </Picker>
+            </View>
+
             <Button title="저장" onPress={handleSaveProfile} />
             <Button title="취소" onPress={() => setIsEditing(false)} />
-          </View>
+          </ScrollView>
         </View>
       </Modal>
     </View>
@@ -129,14 +237,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 10,
   },
-  textInput: {
-    borderColor: '#ccc',
-    borderWidth: 1,
-    padding: 10,
-    marginBottom: 10,
-    width: '100%',
-    borderRadius: 5,
-  },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -144,10 +244,26 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modalView: {
-    width: 300,
+    width: 320,
     backgroundColor: 'white',
     padding: 20,
     borderRadius: 10,
-    alignItems: 'center',
+  },
+  inputRow: {
+    marginBottom: 10,
+  },
+  label: {
+    fontSize: 16,
+    marginBottom: 5,
+    fontWeight: 'bold',
+  },
+  textInput: {
+    borderColor: '#ccc',
+    borderWidth: 1,
+    padding: 8,
+    borderRadius: 5,
+  },
+  picker: {
+    width: '100%',
   },
 });
